@@ -1,32 +1,52 @@
 const int ledPin = 4;
 const int pinpulsante = 1;
+const int pinmotor = 9;
+
 int val = 0;
 int lastval = 0;
 int ledstate = LOW;
-int pinmotor = 9;
+int velocitaMotore = 0;
+int velocitaTarget = 0;
 
 void setup() {
   Serial.begin(9600);
   pinMode(ledPin, OUTPUT);
   pinMode(pinpulsante, INPUT);
-  pinMode(pinmotor, OUTPUT );
+  pinMode(pinmotor, OUTPUT);
 }
 
 void loop() {
-  val = digitalRead(pinpulsante);  // ✅ Leggi il pulsante, non il LED
+  val = digitalRead(pinpulsante);
   
-  // Rileva il fronte di salita (pressione del pulsante)
+  // Rileva pressione del pulsante
   if (val == HIGH && val != lastval) {
-    ledstate = !ledstate;  // Inverti lo stato
-    digitalWrite(ledPin, ledstate);  // Applica il nuovo stato
-    digitalWrite(pinmotor, ledstate);
+    ledstate = !ledstate;
+    digitalWrite(ledPin, ledstate);
+    
+    // Imposta velocità target in base allo stato
+    if (ledstate == HIGH) {
+      velocitaTarget = 255;  // Accelera
+    } else {
+      velocitaTarget = 0;    // Ferma
+    }
   }
   
-  lastval = val;  // ✅ Aggiorna lastval
-  Serial.print("Stato LED: ");
-  Serial.print(ledstate);
-  Serial.print(" - Ultimo valore: ");
-  Serial.println(lastval);
+  lastval = val;
   
-  delay(50);  // Delay ridotto per migliore reattività
+  // Accelerazione/decelerazione graduale NON bloccante
+  if (velocitaMotore < velocitaTarget) {
+    velocitaMotore++;
+  } else if (velocitaMotore > velocitaTarget) {
+    velocitaMotore--;
+  }
+  
+  analogWrite(pinmotor, velocitaMotore);
+  
+  // Debug
+  Serial.print("LED: ");
+  Serial.print(ledstate);
+  Serial.print(" - Velocità motore: ");
+  Serial.println(velocitaMotore);
+  
+  delay(20);  // Accelerazione più fluida
 }

@@ -1,5 +1,5 @@
-int ledPin = 4;
-int pinpulsante = 1;
+const int ledPin = 4;
+const int pinpulsante = 1;
 
 void setup() {
   pinMode(ledPin, OUTPUT);

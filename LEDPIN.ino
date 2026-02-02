@@ -3,11 +3,13 @@ const int pinpulsante = 1;
 int val = 0;
 int lastval = 0;
 int ledstate = LOW;
+int pinmotor = 9;
 
 void setup() {
   Serial.begin(9600);
   pinMode(ledPin, OUTPUT);
   pinMode(pinpulsante, INPUT);
+  pinMode(pinmotor, OUTPUT );
 }
 
 void loop() {
@@ -17,10 +19,10 @@ void loop() {
   if (val == HIGH && val != lastval) {
     ledstate = !ledstate;  // Inverti lo stato
     digitalWrite(ledPin, ledstate);  // Applica il nuovo stato
+    digitalWrite(pinmotor, ledstate);
   }
   
   lastval = val;  // ✅ Aggiorna lastval
-  
   Serial.print("Stato LED: ");
   Serial.print(ledstate);
   Serial.print(" - Ultimo valore: ");
